@@ -75,7 +75,7 @@
 	<build>
 		<resources>
 		 <resource>
-		  <directory>resources</directory>
+		  <directory>src/main/resources</directory>
 		   <targetPath>${project.build.outputDirectory}</targetPath>
 			<includes>
 				<include>application.properties</include>
