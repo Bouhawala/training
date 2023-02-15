@@ -1,1 +1,5 @@
 .vscode
+.gitignore
+HELP.md
+mvnw
+mvnw.cmd
