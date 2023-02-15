@@ -3,19 +3,18 @@ package training.training.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import training.training.entity.Department;
+import training.training.error.DepartmentNotFoundException;
 import training.training.repository.DepartmentRepository;
 
 @SpringBootTest
@@ -38,8 +38,6 @@ public class DepartmentServiceTest {
 
     @MockBean
     private DepartmentRepository departmentRepository;
-
-    private Department department;
     
     @BeforeEach
     void setUp() {
@@ -82,11 +80,11 @@ public class DepartmentServiceTest {
     }
 
     @Test
+    @DisplayName("JUnit test for delete department")
     void should_delete_one_department() {
-        // Arrange
+
         doNothing().when(departmentRepository).deleteById(anyLong());
 
-        // Act & Assert
         departmentService.deleteDepartmentById(getRandomLong());
         verify(departmentRepository, times(1)).deleteById(anyLong());
         verifyNoMoreInteractions(departmentRepository);
@@ -94,6 +92,46 @@ public class DepartmentServiceTest {
 
     private long getRandomLong() {
         return new Random().longs(1, 10).findFirst().getAsLong();
+    }
+
+    @Test
+    @DisplayName("JUnit test for find one department")
+    void should_find_and_return_one_department() throws DepartmentNotFoundException {
+
+        final var expectedDepartment = Department.builder()
+                .departmentName("IT")
+                .departmentAddress("Schifflange")
+                .departmentCode("IT-06")
+                .build();
+        when(departmentRepository.findById(anyLong())).thenReturn(Optional.of(expectedDepartment));
+
+        final var actual = departmentService.fetchDepartmentById(getRandomLong());
+
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expectedDepartment);
+        verify(departmentRepository, times(1)).findById(anyLong());
+        verifyNoMoreInteractions(departmentRepository);
+    }
+
+    @Test
+    @DisplayName("department not found")
+    void should_not_found_a_department_that_doesnt_exists() {
+
+        when(departmentRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(DepartmentNotFoundException.class, () -> departmentService.fetchDepartmentById(getRandomLong()));
+        verify(departmentRepository, times(1)).findById(anyLong());
+        verifyNoMoreInteractions(departmentRepository);
+    }
+
+    @Test
+    @DisplayName("JUnit test for find all department")
+    void should_find_and_return_all_departments() {
+
+        when(departmentRepository.findAll()).thenReturn(List.of(Department.builder().build(), Department.builder().build()));
+
+        assertThat(departmentService.fetchDepartmentList()).hasSize(2);
+        verify(departmentRepository, times(1)).findAll();
+        verifyNoMoreInteractions(departmentRepository);
     }
 
 }
