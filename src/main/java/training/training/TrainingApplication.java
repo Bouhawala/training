@@ -71,6 +71,19 @@ public class TrainingApplication {
 					.collect(Collectors.toList());
 
 		System.out.println(filterDepartment);
+
+		//findFirst
+		Department firstDepartment = departments.stream()
+					.filter(department -> department.getDepartmentName().equals("IT"))
+					.map(department -> Department.builder()
+					.departmentName(department.getDepartmentName().toUpperCase())
+					.departmentAddress(department.getDepartmentAddress().toUpperCase())
+					.departmentCode(department.getDepartmentCode().toUpperCase())
+					.build())
+					.findFirst()
+					.orElse(null);
+
+		System.out.println(firstDepartment);
 	}
 
 }
