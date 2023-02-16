@@ -1,5 +1,7 @@
 package training.training.controller;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +17,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import training.training.entity.Department;
 import training.training.error.DepartmentNotFoundException;
+import training.training.repository.DepartmentRepository;
 import training.training.service.DepartmentService;
 
 @WebMvcTest(DepartmentController.class)
@@ -70,4 +73,5 @@ public class DepartmentControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$.departmentName").value(department.getDepartmentName()));
     }
+ 
 }
