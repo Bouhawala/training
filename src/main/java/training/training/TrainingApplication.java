@@ -2,7 +2,6 @@ package training.training;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
@@ -14,6 +13,7 @@ import training.training.entity.Department;
 public class TrainingApplication {
 
 	static List<Department> departments = new ArrayList<>();
+
 	static {
 		departments.add(
 			Department.builder()
@@ -42,6 +42,7 @@ public class TrainingApplication {
 	}
 
 	public static void main(String[] args) {
+
 		//SpringApplication.run(TrainingApplication.class, args);
 
 		//forEach
@@ -84,6 +85,23 @@ public class TrainingApplication {
 					.orElse(null);
 
 		System.out.println(firstDepartment);
+
+		//short circuit
+		List<Department> shortCircuit = departments.stream()
+					.skip(1)
+					.limit(1)
+					.collect(Collectors.toList());
+
+		System.out.println(shortCircuit);
+
+		//sort
+		List<Department> sortedDepartments = departments.stream()
+						.sorted((d1,d2) -> d1.getDepartmentName()
+						.compareToIgnoreCase(d2.getDepartmentName()))
+						.collect(Collectors.toList());
+
+		System.out.println(sortedDepartments);
+
 	}
 
 }
